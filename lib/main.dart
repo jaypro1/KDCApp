@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kdc_app/FirstRoute.dart';
-import 'package:kdc_app/my_home_page.dart';
-import 'package:kdc_app/scan_page.dart';
 
 import 'LoginPage.dart';
 

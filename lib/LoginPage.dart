@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kdc_app/barcodeExample.dart';
 import 'package:kdc_app/mixins/ValidatorMixins.dart';
 
 import 'GameScanner.dart';
@@ -30,6 +31,7 @@ class _LoginPageState extends State<LoginPage> with ValidatorMixins {
     if (v ?? false) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => GameScanner()));
+      // context, MaterialPageRoute(builder: (context) => BarCodeExample()));
     }
   }
 
