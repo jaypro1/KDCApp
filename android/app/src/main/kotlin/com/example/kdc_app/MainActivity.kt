@@ -1,4 +1,4 @@
-package com.example.kdc_app
+package com.jay.kdc_app
 
 import io.flutter.embedding.android.FlutterActivity
 
