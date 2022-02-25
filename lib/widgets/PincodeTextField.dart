@@ -47,7 +47,14 @@ class _PincodeTextFieldState extends State<PincodeTextField> {
               pinList[i] = value;
               if (value.length == 1) {
                 if (i == widget.length - 1) {
-                  widget.onSubmit("Index: $i | " + collapsePinList());
+                  String pin = collapsePinList();
+                  if (pin.length == widget.length) {
+                    print("Index: $i | " + pin);
+                    widget.onSubmit(pin);
+                  } else {
+                    // Invalid Pin. Set Error.
+
+                  }
                 } else {
                   FocusScope.of(context).nextFocus();
                 }
@@ -72,19 +79,11 @@ class _PincodeTextFieldState extends State<PincodeTextField> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 33, vertical: 41),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.spaceEvenly,
-                children: getDigitTextFields(length: widget.length),
-              ),
-            )
-          ],
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          alignment: WrapAlignment.center,
+          children: getDigitTextFields(length: widget.length),
         ),
       ),
     );
