@@ -7,9 +7,16 @@ import 'package:kdc_app/widgets/PincodeTextField.dart';
 import 'package:kdc_app/models/KDCUser.class.dart';
 
 class OTPPage extends StatelessWidget {
-  OTPPage({Key? key, required this.verificationID}) : super(key: key);
+  OTPPage(
+      {Key? key,
+      required this.verificationID,
+      required this.name,
+      required this.group})
+      : super(key: key);
 
   final String verificationID;
+  final String name;
+  final String group;
   FirebaseAuth auth = FirebaseAuth.instance;
 
   _verifyCode(String pin) async {
@@ -27,7 +34,7 @@ class OTPPage extends StatelessWidget {
         print("Has a document in Users");
       } else {
         // Create Document.
-        KDCUser newUser = KDCUser("Jay C", "male", "");
+        KDCUser newUser = KDCUser(name, group, "");
         // String data = jsonEncode(newUser);
         try {
           DocumentReference doc = users.doc(authVal.user!.uid);

@@ -14,6 +14,13 @@ class ValidatorMixins {
     return null;
   }
 
+  String? validateName(String? name) {
+    if (name == null || name.trim().isEmpty) {
+      return "Name cannot be Empty";
+    }
+    return null;
+  }
+
   String? validatePassword(String? password) {
     if (password == null || password.trim().isEmpty) {
       return "Password is Empty";

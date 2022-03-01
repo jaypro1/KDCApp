@@ -17,6 +17,11 @@ class PhoneLogin extends StatefulWidget {
 class _PhoneLoginState extends State<PhoneLogin> with ValidatorMixins {
   final formKey = GlobalKey<FormState>(debugLabel: "PhoneLogin");
   String? _phoneNumber;
+  String? _name;
+  String? _group;
+  List<bool> isSelected = List.filled(3, false);
+  List<String> groupOptions = ["Bal", "Balika", "Both"];
+  bool _groupError = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
   @override
@@ -50,7 +55,17 @@ class _PhoneLoginState extends State<PhoneLogin> with ValidatorMixins {
   _login() async {
     final bool? formValid = formKey.currentState?.validate();
     formKey.currentState?.save();
-
+    if (!groupOptions.contains(_group)) {
+      //If Group not selected, cant procede.
+      //todo extrapolate this toggle field, and add validator support.
+      setState(() {
+        _groupError = true;
+      });
+      return;
+    }
+    if (!formValid!) {
+      return;
+    }
     bool authUser = false;
     if (Platform.isAndroid || Platform.isIOS) {
       print("Native App");
@@ -70,8 +85,11 @@ class _PhoneLoginState extends State<PhoneLogin> with ValidatorMixins {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      OTPPage(verificationID: verificationId)));
+                  builder: (context) => OTPPage(
+                      name: _name ??
+                          "", //Should not be null, because of Form Valid check.
+                      group: _group ?? "",
+                      verificationID: verificationId)));
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           print("timeout" + verificationId);
@@ -80,6 +98,60 @@ class _PhoneLoginState extends State<PhoneLogin> with ValidatorMixins {
         timeout: const Duration(seconds: 60),
       );
     }
+  }
+
+  List<Widget> getTextFieldsFromList(List<String> options) {
+    List<Widget> textFields = List.empty(growable: true);
+    for (String s in options) {
+      textFields.add(Text(s));
+    }
+    return textFields;
+  }
+
+  Widget getNameField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: TextFormField(
+        decoration: const InputDecoration(
+          border: UnderlineInputBorder(),
+          labelText: "Name",
+        ),
+        validator: validateName,
+        onSaved: (String? val) {
+          _name = val;
+        },
+      ),
+    );
+  }
+
+  Widget getGroupField() {
+    // isSelected = List.filled(3, false);
+    return Column(
+      children: [
+        ToggleButtons(
+          children: getTextFieldsFromList(groupOptions),
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected.length;
+                  buttonIndex++) {
+                if (buttonIndex == index) {
+                  _group = groupOptions[buttonIndex];
+                  isSelected[buttonIndex] = true;
+                  setState(() {
+                    _groupError = false;
+                  });
+                } else {
+                  isSelected[buttonIndex] = false;
+                }
+              }
+            });
+          },
+          isSelected: isSelected,
+        ),
+        if (_groupError) Text("You need to select Group")
+      ],
+    );
   }
 
   Widget getPhoneField() {
@@ -119,6 +191,8 @@ class _PhoneLoginState extends State<PhoneLogin> with ValidatorMixins {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                getNameField(),
+                getGroupField(),
                 getPhoneField(),
                 getSubmitButton(),
               ],
